@@ -2,8 +2,7 @@ FROM alpine:3.6
 
 MAINTAINER estafette.io
 
-RUN apk add --no-cache \
-    git
+RUN apk --no-cache add git
 
 COPY estafette-extension-git-clone /
 
