@@ -28,6 +28,8 @@ pipelines:
     commands:
     - docker login --username=${ESTAFETTE_DOCKER_HUB_USERNAME} --password="${ESTAFETTE_DOCKER_HUB_PASSWORD}"
     - docker push extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
+    - docker tag extensions/git-clone:${ESTAFETTE_BUILD_VERSION} extensions/git-clone:dev
+    - docker push extensions/git-clone:dev
     when:
       status == 'succeeded' &&
       branch == 'master' &&
