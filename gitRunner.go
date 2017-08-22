@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os/exec"
+	"time"
 
 	"github.com/rs/zerolog/log"
 )
@@ -17,7 +19,7 @@ func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string) (err error
 		Msgf("Cloning git repository %v to branch %v and revision %v...", gitName, gitBranch, gitRevision)
 
 	// git clone
-	err = gitClone(gitName, gitURL, gitBranch)
+	err = gitCloneWithRetry(gitName, gitURL, gitBranch, 3)
 	if err != nil {
 		return
 	}
@@ -44,11 +46,15 @@ func gitCloneWithRetry(gitName, gitURL, gitBranch string, retries int) (err erro
 
 	attempt := 0
 
-	for err != nil && attempt < retries {
+	for attempt == 0 || (err != nil && attempt < retries) {
+
 		err = gitClone(gitName, gitURL, gitBranch)
 		if err != nil {
 			log.Debug().Err(err).Msgf("Attempt %v cloning git repository %v to branch %v and revision %v failed", attempt, gitName, gitBranch, gitRevision)
 		}
+
+		// wait with exponential backoff
+		<-time.After(time.Duration(math.Pow(2, float64(attempt))) * time.Second)
 
 		attempt++
 	}
@@ -80,7 +86,5 @@ func gitCheckout(gitRevision string) (err error) {
 	if err != nil {
 		return
 	}
-	return
-}
 	return
 }
