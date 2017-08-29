@@ -24,7 +24,7 @@ var (
 	gitName     = kingpin.Flag("git-name", "The owner plus repository name.").Envar("ESTAFETTE_GIT_NAME").Required().String()
 	gitURL      = kingpin.Flag("git-url", "The authenticated url to clone.").Envar("ESTAFETTE_GIT_URL").Required().String()
 	gitBranch   = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
-	gitRevision = kingpin.Flag("estafette-build-status", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
+	gitRevision = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
 )
 
 func main() {
