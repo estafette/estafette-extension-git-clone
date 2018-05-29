@@ -33,8 +33,7 @@ func main() {
 	kingpin.Parse()
 
 	// pretty print to make build logs more readable
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().
-		Timestamp().
+	log.Logger = zerolog.New(os.Stdout).With().
 		Logger()
 
 	// use zerolog for any logs sent via standard log library
