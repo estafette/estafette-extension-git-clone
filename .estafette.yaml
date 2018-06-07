@@ -1,5 +1,5 @@
 builder:
-  track: stable
+  track: dev
 
 labels:
   app: estafette-extension-git-clone
@@ -15,10 +15,10 @@ version:
     releaseBranch: master
 
 pipelines:
-  set-pending-build-status:
-    image: extensions/github-status:dev
-    status: pending
+  git-clone:
+    image: extensions/github-clone:stable
     when:
+      status == 'succeeded' &&
       server == 'estafette'
 
   build:
@@ -48,11 +48,6 @@ pipelines:
       status == 'succeeded' &&
       branch == 'master' &&
       server == 'gocd'
-
-  set-build-status:
-    image: extensions/github-status:dev
-    when:
-      server == 'estafette'
 
   slack-notify:
     image: extensions/slack-build-status:dev
