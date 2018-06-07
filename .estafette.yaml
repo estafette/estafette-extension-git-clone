@@ -16,7 +16,7 @@ version:
 
 pipelines:
   git-clone:
-    image: extensions/github-clone:stable
+    image: extensions/git-clone:stable
     when:
       status == 'succeeded' &&
       server == 'estafette'
