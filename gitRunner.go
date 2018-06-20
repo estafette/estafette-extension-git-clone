@@ -9,17 +9,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string) (err error) {
+func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClone bool) (err error) {
 
 	log.Info().
 		Str("name", gitName).
 		Str("url", gitURL).
 		Str("branch", gitBranch).
 		Str("revision", gitRevision).
+		Bool("shallowClone", shallowClone).
 		Msgf("Cloning git repository %v to branch %v and revision %v...", gitName, gitBranch, gitRevision)
 
 	// git clone
-	err = gitCloneWithRetry(gitName, gitURL, gitBranch, 3)
+	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, 3)
 	if err != nil {
 		return
 	}
@@ -37,18 +38,19 @@ func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string) (err error
 		Str("url", gitURL).
 		Str("branch", branch).
 		Str("revision", revision).
+		Bool("shallowClone", shallowClone).
 		Msgf("Finished cloning git repository %v to branch %v and revision %v", gitName, gitBranch, gitRevision)
 
 	return
 }
 
-func gitCloneWithRetry(gitName, gitURL, gitBranch string, retries int) (err error) {
+func gitCloneWithRetry(gitName, gitURL, gitBranch string, shallowClone bool, retries int) (err error) {
 
 	attempt := 0
 
 	for attempt == 0 || (err != nil && attempt < retries) {
 
-		err = gitClone(gitName, gitURL, gitBranch)
+		err = gitClone(gitName, gitURL, gitBranch, shallowClone)
 		if err != nil {
 			log.Debug().Err(err).Msgf("Attempt %v cloning git repository %v to branch %v and revision %v failed", attempt, gitName, gitBranch, gitRevision)
 		}
@@ -62,9 +64,12 @@ func gitCloneWithRetry(gitName, gitURL, gitBranch string, retries int) (err erro
 	return
 }
 
-func gitClone(gitName, gitURL, gitBranch string) (err error) {
+func gitClone(gitName, gitURL, gitBranch string, shallowClone bool) (err error) {
 
-	args := []string{"clone", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, "/estafette-work"}
+	args := []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), gitURL, "/estafette-work"}
+	if shallowClone {
+		args = []string{"clone", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, "/estafette-work"}
+	}
 	gitCloneCommand := exec.Command("git", args...)
 	gitCloneCommand.Stdout = log.Logger
 	gitCloneCommand.Stderr = log.Logger

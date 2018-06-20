@@ -21,10 +21,11 @@ var (
 
 var (
 	// flags
-	gitName     = kingpin.Flag("git-name", "The owner plus repository name.").Envar("ESTAFETTE_GIT_NAME").Required().String()
-	gitURL      = kingpin.Flag("git-url", "The authenticated url to clone.").Envar("ESTAFETTE_GIT_URL").Required().String()
-	gitBranch   = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
-	gitRevision = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
+	gitName      = kingpin.Flag("git-name", "The owner plus repository name.").Envar("ESTAFETTE_GIT_NAME").Required().String()
+	gitURL       = kingpin.Flag("git-url", "The authenticated url to clone.").Envar("ESTAFETTE_GIT_URL").Required().String()
+	gitBranch    = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
+	gitRevision  = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
+	shallowClone = kingpin.Flag("shallow-clone", "Shallow clone git repository for improved clone time.").Envar("ESTAFETTE_EXTENSION_SHALLOW").Default("true").Bool()
 )
 
 func main() {
@@ -49,11 +50,8 @@ func main() {
 		Msg("Starting estafette-extension-git-clone...")
 
 	// git clone to specific branch and revision
-	err := gitCloneRevision(*gitName, *gitURL, *gitBranch, *gitRevision)
+	err := gitCloneRevision(*gitName, *gitURL, *gitBranch, *gitRevision, *shallowClone)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v and revision %v...", *gitName, *gitBranch, *gitRevision)
+		log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v...", *gitName, *gitBranch, *gitRevision, *shallowClone)
 	}
-
-	log.Info().
-		Msg("Finished estafette-extension-git-clone...")
 }
