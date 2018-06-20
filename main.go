@@ -25,7 +25,7 @@ var (
 	gitURL       = kingpin.Flag("git-url", "The authenticated url to clone.").Envar("ESTAFETTE_GIT_URL").Required().String()
 	gitBranch    = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
 	gitRevision  = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
-	shallowClone = kingpin.Flag("shallow-clone", "Shallow clone git repository for improved clone time.").Envar("ESTAFETTE_EXTENSION_SHALLOW").Default("true").Bool()
+	shallowClone = kingpin.Flag("shallow-clone", "Shallow clone git repository for improved clone time.").Default("true").OverrideDefaultFromEnvar("ESTAFETTE_EXTENSION_SHALLOW").Bool()
 )
 
 func main() {
