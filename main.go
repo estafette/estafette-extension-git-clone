@@ -30,8 +30,9 @@ func main() {
 	// parse command line parameters
 	kingpin.Parse()
 
-	// log to stdout
+	// log to stdout and hide timestamp
 	log.SetOutput(os.Stdout)
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	// log startup message
 	log.Printf("Starting estafette-extension-git-clone version %v...", version)
