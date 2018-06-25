@@ -2,22 +2,16 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"os"
 	"os/exec"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClone bool) (err error) {
 
-	log.Info().
-		Str("name", gitName).
-		Str("url", gitURL).
-		Str("branch", gitBranch).
-		Str("revision", gitRevision).
-		Bool("shallowClone", shallowClone).
-		Msgf("Cloning git repository %v to branch %v and revision %v...", gitName, gitBranch, gitRevision)
+	log.Printf("Cloning git repository %v to branch %v and revision %v with shallow clone is %v...", gitName, gitBranch, gitRevision, shallowClone)
 
 	// git clone
 	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, 3)
@@ -33,13 +27,7 @@ func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClo
 		}
 	}
 
-	log.Info().
-		Str("name", gitName).
-		Str("url", gitURL).
-		Str("branch", branch).
-		Str("revision", revision).
-		Bool("shallowClone", shallowClone).
-		Msgf("Finished cloning git repository %v to branch %v and revision %v", gitName, gitBranch, gitRevision)
+	log.Printf("Finished cloning git repository %v to branch %v and revision %v with shallow clone is %v", gitName, gitBranch, gitRevision, shallowClone)
 
 	return
 }
@@ -52,7 +40,7 @@ func gitCloneWithRetry(gitName, gitURL, gitBranch string, shallowClone bool, ret
 
 		err = gitClone(gitName, gitURL, gitBranch, shallowClone)
 		if err != nil {
-			log.Debug().Err(err).Msgf("Attempt %v cloning git repository %v to branch %v and revision %v failed", attempt, gitName, gitBranch, gitRevision)
+			log.Printf("Attempt %v cloning git repository %v to branch %v and revision %v failed: %v", attempt, gitName, gitBranch, gitRevision, err)
 		}
 
 		// wait with exponential backoff
@@ -71,8 +59,8 @@ func gitClone(gitName, gitURL, gitBranch string, shallowClone bool) (err error) 
 		args = []string{"clone", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, "/estafette-work"}
 	}
 	gitCloneCommand := exec.Command("git", args...)
-	gitCloneCommand.Stdout = log.Logger
-	gitCloneCommand.Stderr = log.Logger
+	gitCloneCommand.Stdout = os.Stdout
+	gitCloneCommand.Stderr = os.Stderr
 	err = gitCloneCommand.Run()
 	if err != nil {
 		return
@@ -85,8 +73,8 @@ func gitCheckout(gitRevision string) (err error) {
 	args := []string{"checkout", "--quiet", "--force", gitRevision}
 	checkoutCommand := exec.Command("git", args...)
 	checkoutCommand.Dir = "/estafette-work"
-	checkoutCommand.Stdout = log.Logger
-	checkoutCommand.Stderr = log.Logger
+	checkoutCommand.Stdout = os.Stdout
+	checkoutCommand.Stderr = os.Stderr
 	err = checkoutCommand.Run()
 	if err != nil {
 		return

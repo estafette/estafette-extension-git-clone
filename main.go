@@ -1,14 +1,11 @@
 package main
 
 import (
-	stdlog "log"
+	"log"
 	"os"
 	"runtime"
 
 	"github.com/alecthomas/kingpin"
-
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -33,25 +30,15 @@ func main() {
 	// parse command line parameters
 	kingpin.Parse()
 
-	// pretty print to make build logs more readable
-	log.Logger = zerolog.New(os.Stdout).With().
-		Logger()
-
-	// use zerolog for any logs sent via standard log library
-	stdlog.SetFlags(0)
-	stdlog.SetOutput(log.Logger)
+	// log to stdout
+	log.SetOutput(os.Stdout)
 
 	// log startup message
-	log.Info().
-		Str("branch", branch).
-		Str("revision", revision).
-		Str("buildDate", buildDate).
-		Str("goVersion", goVersion).
-		Msg("Starting estafette-extension-git-clone...")
+	log.Printf("Starting estafette-extension-git-clone version %v...", version)
 
 	// git clone to specific branch and revision
 	err := gitCloneRevision(*gitName, *gitURL, *gitBranch, *gitRevision, *shallowClone)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v...", *gitName, *gitBranch, *gitRevision, *shallowClone)
+		log.Fatalf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v: %v", *gitName, *gitBranch, *gitRevision, *shallowClone, err)
 	}
 }
