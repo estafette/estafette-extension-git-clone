@@ -3,6 +3,7 @@ builder:
 
 labels:
   app: estafette-extension-git-clone
+  app-group: estafette-ci-extensions
   team: estafette-team
   language: golang
 
