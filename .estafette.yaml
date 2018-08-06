@@ -15,7 +15,7 @@ version:
     labelTemplate: '{{branch}}'
     releaseBranch: master
 
-pipelines:
+stages:
   git-clone:
     image: extensions/git-clone:stable
     when:
@@ -58,3 +58,8 @@ pipelines:
     - '#build-status'
     when:
       status == 'failed'
+
+releases:
+  dev:
+  beta:
+  stable:
