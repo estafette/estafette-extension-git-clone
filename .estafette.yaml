@@ -59,22 +59,24 @@ stages:
 
 releases:
   beta:
-    tag-container-image:
-      image: extensions/docker:dev
-      action: tag
-      container: git-clone
-      repositories:
-      - extensions
-      tags:
-      - beta
+    stages:
+      tag-container-image:
+        image: extensions/docker:dev
+        action: tag
+        container: git-clone
+        repositories:
+        - extensions
+        tags:
+        - beta
 
   stable:
-    tag-container-image:
-      image: extensions/docker:dev
-      action: tag
-      container: git-clone
-      repositories:
-      - extensions
-      tags:
-      - stable
-      - latest
+    stages:
+      tag-container-image:
+        image: extensions/docker:dev
+        action: tag
+        container: git-clone
+        repositories:
+        - extensions
+        tags:
+        - stable
+        - latest
