@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.8
 
 LABEL maintainer="estafette.io" \
       description="The estafette-extension-git-clone component is an Estafette extension to clone a git repository for builds handled by Estafette CI"
