@@ -33,17 +33,17 @@ func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClo
 	return
 }
 
-func gitCloneOverride(gitName, gitURL, gitBranch, subdir string) (err error) {
+func gitCloneOverride(gitName, gitURL, gitBranch, subdir string, shallowClone bool) (err error) {
 
-	log.Printf("Cloning git repository %v to branch %v into subdir %v...", gitName, gitBranch, subdir)
+	log.Printf("Cloning git repository %v to branch %v into subdir %v with shallow clone is %v...", gitName, gitBranch, subdir, shallowClone)
 
 	// git clone
-	err = gitCloneWithRetry(gitName, gitURL, gitBranch, true, subdir, 3)
+	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, subdir, 3)
 	if err != nil {
 		return
 	}
 
-	log.Printf("Finished cloning git repository %v to branch %v into subdir %v", gitName, gitBranch, subdir)
+	log.Printf("Finished cloning git repository %v to branch %v into subdir %v with shallow clone is %v", gitName, gitBranch, subdir, shallowClone)
 
 	return
 }
