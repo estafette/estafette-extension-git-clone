@@ -19,7 +19,9 @@ var (
 
 var (
 	// flags
-	gitName              = kingpin.Flag("git-name", "The owner plus repository name.").Envar("ESTAFETTE_GIT_FULLNAME").Required().String()
+	gitSource            = kingpin.Flag("git-source", "The source of the repository.").Envar("ESTAFETTE_GIT_SOURCE").Required().String()
+	gitOwner             = kingpin.Flag("git-owner", "The owner of the repository.").Envar("ESTAFETTE_GIT_OWNER").Required().String()
+	gitName              = kingpin.Flag("git-name", "The owner plus repository name.").Envar("ESTAFETTE_GIT_NAME").Required().String()
 	gitBranch            = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
 	gitRevision          = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
 	shallowClone         = kingpin.Flag("shallow-clone", "Shallow clone git repository for improved clone time.").Default("true").OverrideDefaultFromEnvar("ESTAFETTE_EXTENSION_SHALLOW").Bool()
@@ -27,8 +29,6 @@ var (
 	overrideBranch       = kingpin.Flag("override-branch", "Set other repository branch to clone from same owner.").Envar("ESTAFETTE_EXTENSION_BRANCH").String()
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
 
-	gitSource         = kingpin.Flag("git-source", "The source of the repository.").Envar("ESTAFETTE_GIT_SOURCE").Required().String()
-	gitOwner          = kingpin.Flag("git-owner", "The owner of the repository.").Envar("ESTAFETTE_GIT_OWNER").Required().String()
 	bitbucketAPIToken = kingpin.Flag("bitbucket-api-token", "The api token in case it's a bitbucket repo.").Envar("ESTAFETTE_BITBUCKET_API_TOKEN").String()
 	githubAPIToken    = kingpin.Flag("github-api-token", "The api token in case it's a github repo.").Envar("ESTAFETTE_GITHUB_API_TOKEN").String()
 )
@@ -76,10 +76,10 @@ func main() {
 
 	gitURL := ""
 	if *bitbucketAPIToken != "" {
-		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v", *bitbucketAPIToken, *gitSource, *gitName)
+		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", *bitbucketAPIToken, *gitOwner, *gitSource, *gitName)
 	}
 	if *githubAPIToken != "" {
-		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v", *githubAPIToken, *gitSource, *gitName)
+		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", *githubAPIToken, *gitOwner, *gitSource, *gitName)
 	}
 
 	if gitURL == "" {
