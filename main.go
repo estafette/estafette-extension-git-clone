@@ -46,8 +46,11 @@ func main() {
 	log.Printf("Starting estafette-extension-git-clone version %v...", version)
 
 	if *overrideRepo != "" {
-		if *overrideBranch == "" || *overrideSubdirectory == "" {
-			log.Fatal("When using 'repo' parameter make sure to specify 'branch' and 'subdir' parameters as well")
+		if *overrideBranch == "" {
+			*overrideBranch = "master"
+		}
+		if *overrideSubdirectory == "" {
+			*overrideSubdirectory = *overrideRepo
 		}
 
 		overrideGitURL := ""

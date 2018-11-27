@@ -42,12 +42,16 @@ stages:
     copy:
     - Dockerfile
 
-  test-alpha-version:
+  integration-test-override-max:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
     repo: estafette.io
     branch: master
     subdir: test  
-  
+
+  integration-test-override-min:
+    image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
+    repo: estafette.io
+
   push-to-docker-hub:
     image: extensions/docker:dev
     action: push
