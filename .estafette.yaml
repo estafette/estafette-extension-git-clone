@@ -42,6 +42,12 @@ stages:
     copy:
     - Dockerfile
 
+  test-alpha-version:
+    image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
+    repo: estafette.io
+    branch: master
+    subdir: test  
+  
   push-to-docker-hub:
     image: extensions/docker:dev
     action: push
