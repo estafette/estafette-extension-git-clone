@@ -76,10 +76,10 @@ func main() {
 
 	gitURL := ""
 	if *bitbucketAPIToken != "" {
-		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", *bitbucketAPIToken, *gitOwner, *gitSource, *gitName)
+		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", *bitbucketAPIToken, *gitSource, *gitOwner, *gitName)
 	}
 	if *githubAPIToken != "" {
-		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", *githubAPIToken, *gitOwner, *gitSource, *gitName)
+		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", *githubAPIToken, *gitSource, *gitOwner, *gitName)
 	}
 
 	if gitURL == "" {
