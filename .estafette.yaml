@@ -24,7 +24,7 @@ stages:
 
   build:
     image: golang:1.11.2-alpine3.8
-    workDir: /go/src/github.com/estafette/${ESTAFETTE_LABEL_APP}
+    workDir: /go/src/${ESTAFETTE_GIT_SOURCE}/${ESTAFETTE_GIT_OWNER}/${ESTAFETTE_GIT_NAME}
     env:
       CGO_ENABLED: 0
       GOOS: linux
@@ -36,6 +36,19 @@ stages:
     image: extensions/docker:dev
     action: build
     container: git-clone
+    inline: |
+      FROM alpine:3.8
+
+      LABEL maintainer="estafette.io" \
+            description="The ${ESTAFETTE_GIT_NAME} component is an Estafette extension to clone a git repository for builds handled by Estafette CI"
+
+      RUN apk add --update --no-cache \
+          git \
+          && rm -rf /var/cache/apk/*
+
+      COPY ${ESTAFETTE_GIT_NAME} /
+
+      ENTRYPOINT ["/${ESTAFETTE_GIT_NAME}"]
     repositories:
     - extensions
     path: ./publish
