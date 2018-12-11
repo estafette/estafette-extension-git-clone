@@ -83,16 +83,12 @@ func main() {
 			*overrideSubdirectory = *overrideRepo
 		}
 
-		overrideGitURL := ""
+		overrideGitURL := fmt.Sprintf("https://%v/%v/%v", *gitSource, *gitOwner, *overrideRepo)
 		if bitbucketAPIToken != "" {
 			overrideGitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *overrideRepo)
 		}
 		if githubAPIToken != "" {
 			overrideGitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *overrideRepo)
-		}
-
-		if overrideGitURL == "" {
-			log.Fatalf("Failed generating url for cloning git repository %v to branch %v into subdir %v", *overrideRepo, *overrideBranch, *overrideSubdirectory)
 		}
 
 		// git clone the specified repository branch to the specific directory
@@ -104,16 +100,12 @@ func main() {
 		return
 	}
 
-	gitURL := ""
+	gitURL := fmt.Sprintf("https://%v/%v/%v", *gitSource, *gitOwner, *gitName)
 	if bitbucketAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *gitName)
 	}
 	if githubAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *gitName)
-	}
-
-	if gitURL == "" {
-		log.Fatalf("Failed generating url for cloning repository %v to branch %v and revision %v with shallow clone is %v", *gitName, *gitBranch, *gitRevision, *shallowClone)
 	}
 
 	// git clone to specific branch and revision
