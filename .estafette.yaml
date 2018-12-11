@@ -17,7 +17,7 @@ version:
 
 stages:
   git-clone:
-    image: extensions/git-clone:dev
+    image: extensions/git-clone:stable
     when:
       status == 'succeeded' &&
       server == 'estafette'
