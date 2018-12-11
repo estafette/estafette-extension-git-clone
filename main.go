@@ -49,26 +49,28 @@ func main() {
 	// get api token from injected credentials
 	bitbucketAPIToken := ""
 	if *bitbucketAPITokenJSON != "" {
+		log.Println("Unmarshalling injected bitbucket api token credentials")
 		var credentials []APITokenCredentials
 		err := json.Unmarshal([]byte(*bitbucketAPITokenJSON), &credentials)
 		if err != nil {
-			log.Fatal("Failed unmarshalling injected credentials: ", err)
+			log.Fatal("Failed unmarshalling injected bitbucket api token credentials: ", err)
 		}
 		if len(credentials) == 0 {
-			log.Fatal("No credentials have been injected")
+			log.Fatal("No bitbucket api token credentials have been injected")
 		}
 		bitbucketAPIToken = credentials[0].AdditionalProperties.Token
 	}
 
 	githubAPIToken := ""
 	if *githubAPITokenJSON != "" {
+		log.Println("Unmarshalling injected github api token credentials")
 		var credentials []APITokenCredentials
 		err := json.Unmarshal([]byte(*githubAPITokenJSON), &credentials)
 		if err != nil {
-			log.Fatal("Failed unmarshalling injected credentials: ", err)
+			log.Fatal("Failed unmarshalling injected github api token credentials: ", err)
 		}
 		if len(credentials) == 0 {
-			log.Fatal("No credentials have been injected")
+			log.Fatal("No github api token credentials have been injected")
 		}
 		githubAPIToken = credentials[0].AdditionalProperties.Token
 	}
