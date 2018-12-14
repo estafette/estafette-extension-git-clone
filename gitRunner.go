@@ -88,7 +88,7 @@ func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, shallowClone
 
 func gitCheckout(gitRevision string) (err error) {
 
-	args := []string{"checkout", "--force", gitRevision}
+	args := []string{"checkout", "--quiet", "--force", gitRevision}
 	checkoutCommand := exec.Command("git", args...)
 	checkoutCommand.Dir = "/estafette-work"
 	checkoutCommand.Stdout = os.Stdout
