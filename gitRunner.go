@@ -72,9 +72,9 @@ func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, shallowClone
 
 	targetDirectory := getTargetDir(subdir)
 
-	args := []string{"clone", "--quiet", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+	args := []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	if shallowClone {
-		args = []string{"clone", "--quiet", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+		args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	}
 	gitCloneCommand := exec.Command("git", args...)
 	gitCloneCommand.Stdout = os.Stdout
@@ -88,7 +88,7 @@ func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, shallowClone
 
 func gitCheckout(gitRevision string) (err error) {
 
-	args := []string{"checkout", "--quiet", "--force", gitRevision}
+	args := []string{"checkout", "--force", gitRevision}
 	checkoutCommand := exec.Command("git", args...)
 	checkoutCommand.Dir = "/estafette-work"
 	checkoutCommand.Stdout = os.Stdout
