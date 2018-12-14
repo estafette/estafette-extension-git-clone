@@ -72,9 +72,9 @@ func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, subdir strin
 
 	targetDirectory := getTargetDir(subdir)
 
-	args := []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+	args := []string{"clone", "--quiet", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	if shallowClone {
-		args = []string{"clone", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+		args = []string{"clone", "--quiet", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	}
 	gitCloneCommand := exec.Command("git", args...)
 	gitCloneCommand.Stdout = os.Stdout
