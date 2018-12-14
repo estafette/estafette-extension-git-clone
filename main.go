@@ -26,6 +26,7 @@ var (
 	gitBranch            = kingpin.Flag("git-branch", "The branch to clone.").Envar("ESTAFETTE_GIT_BRANCH").Required().String()
 	gitRevision          = kingpin.Flag("git-revision", "The revision to check out.").Envar("ESTAFETTE_GIT_REVISION").String()
 	shallowClone         = kingpin.Flag("shallow-clone", "Shallow clone git repository for improved clone time.").Default("true").OverrideDefaultFromEnvar("ESTAFETTE_EXTENSION_SHALLOW").Bool()
+	shallowCloneDepth    = kingpin.Flag("shallow-clone-depth", "Depth for shallow clone git repository for improved clone time.").Default("50").OverrideDefaultFromEnvar("ESTAFETTE_EXTENSION_DEPTH").Int()
 	overrideRepo         = kingpin.Flag("override-repo", "Set other repository name to clone from same owner.").Envar("ESTAFETTE_EXTENSION_REPO").String()
 	overrideBranch       = kingpin.Flag("override-branch", "Set other repository branch to clone from same owner.").Envar("ESTAFETTE_EXTENSION_BRANCH").String()
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
@@ -92,7 +93,7 @@ func main() {
 		}
 
 		// git clone the specified repository branch to the specific directory
-		err := gitCloneOverride(*overrideRepo, overrideGitURL, *overrideBranch, *overrideSubdirectory, *shallowClone)
+		err := gitCloneOverride(*overrideRepo, overrideGitURL, *overrideBranch, *overrideSubdirectory, *shallowClone, *shallowCloneDepth)
 		if err != nil {
 			log.Fatalf("Error cloning git repository %v to branch %v into subdir %v: %v", *overrideRepo, *overrideBranch, *overrideSubdirectory, err)
 		}
@@ -109,7 +110,7 @@ func main() {
 	}
 
 	// git clone to specific branch and revision
-	err := gitCloneRevision(*gitName, gitURL, *gitBranch, *gitRevision, *shallowClone)
+	err := gitCloneRevision(*gitName, gitURL, *gitBranch, *gitRevision, *shallowClone, *shallowCloneDepth)
 	if err != nil {
 		log.Fatalf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v: %v", *gitName, *gitBranch, *gitRevision, *shallowClone, err)
 	}

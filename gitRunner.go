@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClone bool) (err error) {
+func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClone bool, shallowCloneDepth int) (err error) {
 
-	log.Printf("Cloning git repository %v to branch %v and revision %v with shallow clone is %v...", gitName, gitBranch, gitRevision, shallowClone)
+	log.Printf("Cloning git repository %v to branch %v and revision %v with shallow clone is %v and depth %v...", gitName, gitBranch, gitRevision, shallowClone, shallowCloneDepth)
 
 	// git clone
-	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, ".", 3)
+	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, ".", 3)
 	if err != nil {
 		return
 	}
@@ -28,33 +28,33 @@ func gitCloneRevision(gitName, gitURL, gitBranch, gitRevision string, shallowClo
 		}
 	}
 
-	log.Printf("Finished cloning git repository %v to branch %v and revision %v with shallow clone is %v", gitName, gitBranch, gitRevision, shallowClone)
+	log.Printf("Finished cloning git repository %v to branch %v and revision %v with shallow clone is %v and depth %v", gitName, gitBranch, gitRevision, shallowClone, shallowCloneDepth)
 
 	return
 }
 
-func gitCloneOverride(gitName, gitURL, gitBranch, subdir string, shallowClone bool) (err error) {
+func gitCloneOverride(gitName, gitURL, gitBranch, subdir string, shallowClone bool, shallowCloneDepth int) (err error) {
 
-	log.Printf("Cloning git repository %v to branch %v into subdir %v with shallow clone is %v...", gitName, gitBranch, subdir, shallowClone)
+	log.Printf("Cloning git repository %v to branch %v into subdir %v with shallow clone is %v and depth %v...", gitName, gitBranch, subdir, shallowClone, shallowCloneDepth)
 
 	// git clone
-	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, subdir, 3)
+	err = gitCloneWithRetry(gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, subdir, 3)
 	if err != nil {
 		return
 	}
 
-	log.Printf("Finished cloning git repository %v to branch %v into subdir %v with shallow clone is %v", gitName, gitBranch, subdir, shallowClone)
+	log.Printf("Finished cloning git repository %v to branch %v into subdir %v with shallow clone is %v and depth %v", gitName, gitBranch, subdir, shallowClone, shallowCloneDepth)
 
 	return
 }
 
-func gitCloneWithRetry(gitName, gitURL, gitBranch string, shallowClone bool, subdir string, retries int) (err error) {
+func gitCloneWithRetry(gitName, gitURL, gitBranch string, shallowClone bool, shallowCloneDepth int, subdir string, retries int) (err error) {
 
 	attempt := 0
 
 	for attempt == 0 || (err != nil && attempt < retries) {
 
-		err = gitClone(gitName, gitURL, gitBranch, shallowClone, subdir)
+		err = gitClone(gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, subdir)
 		if err != nil {
 			log.Printf("Attempt %v cloning git repository %v to branch %v and revision %v failed: %v", attempt, gitName, gitBranch, gitRevision, err)
 		}
@@ -68,13 +68,13 @@ func gitCloneWithRetry(gitName, gitURL, gitBranch string, shallowClone bool, sub
 	return
 }
 
-func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, subdir string) (err error) {
+func gitClone(gitName, gitURL, gitBranch string, shallowClone bool, shallowCloneDepth int, subdir string) (err error) {
 
 	targetDirectory := getTargetDir(subdir)
 
 	args := []string{"clone", "--quiet", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	if shallowClone {
-		args = []string{"clone", "--quiet", "--depth=50", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+		args = []string{"clone", "--quiet", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	}
 	gitCloneCommand := exec.Command("git", args...)
 	gitCloneCommand.Stdout = os.Stdout
