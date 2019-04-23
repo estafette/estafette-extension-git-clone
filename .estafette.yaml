@@ -49,8 +49,6 @@ stages:
     repositories:
     - extensions
     path: ./publish
-    copy:
-    - Dockerfile
 
   integration-test-override-max:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
