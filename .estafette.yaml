@@ -58,19 +58,14 @@ stages:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
     repo: estafette.io
 
-  delete-all-files:
+  clean-working-directory:
     image: golang:1.13.0-alpine3.10
     commands:
-    - ls -latr
-    - rm -rf *
-    - rm -rf .git
-    - rm -rf .estafette.yaml
-    - rm -rf .gitignore
-    - ls -latr
+    - rm -rf ..?* .[!.]* *
 
   integration-test-override-any-public:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
-    repo: https://github.com/golang/go
+    repo: https://github.com/golang/go.git
     branch: master
     subdir: .
 
