@@ -64,6 +64,8 @@ stages:
     - ls -latr
     - rm -rf *
     - rm -rf .git
+    - rm -rf .estafette.yaml
+    - rm -rf .gitignore
     - ls -latr
 
   integration-test-override-any-public:
