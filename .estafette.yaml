@@ -61,7 +61,10 @@ stages:
   delete-all-files:
     image: golang:1.13.0-alpine3.10
     commands:
+    - ls -latr
     - rm -rf *
+    - rm -rf .git
+    - ls -latr
 
   integration-test-override-any-public:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
