@@ -89,8 +89,6 @@ func main() {
 		if strings.HasPrefix(*overrideRepo, "https://") {
 			// this allows for any public repo to be cloned
 			overrideGitURL = *overrideRepo
-
-			log.Printf("Repo parameter is full url: %v", overrideGitURL)
 		} else {
 			if bitbucketAPIToken != "" {
 				overrideGitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *overrideRepo)
@@ -98,7 +96,6 @@ func main() {
 			if githubAPIToken != "" {
 				overrideGitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *overrideRepo)
 			}
-			log.Printf("Repo parameter is just the repository name: %v", *overrideRepo)
 		}
 
 		// git clone the specified repository branch to the specific directory
