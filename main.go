@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/alecthomas/kingpin"
 )
@@ -85,11 +86,16 @@ func main() {
 		}
 
 		overrideGitURL := fmt.Sprintf("https://%v/%v/%v", *gitSource, *gitOwner, *overrideRepo)
-		if bitbucketAPIToken != "" {
-			overrideGitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *overrideRepo)
-		}
-		if githubAPIToken != "" {
-			overrideGitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *overrideRepo)
+		if strings.HasPrefix(*overrideRepo, "https://") {
+			// this allows for any public repo to be cloned
+			overrideGitURL = *overrideRepo
+		} else {
+			if bitbucketAPIToken != "" {
+				overrideGitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *overrideRepo)
+			}
+			if githubAPIToken != "" {
+				overrideGitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *overrideRepo)
+			}
 		}
 
 		// git clone the specified repository branch to the specific directory

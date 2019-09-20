@@ -58,6 +58,17 @@ stages:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
     repo: estafette.io
 
+  delete-all-files:
+    image: golang:1.13.0-alpine3.10
+    commands:
+    - rm -rf *
+
+  integration-test-override-any-public:
+    image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
+    repo: https://github.com/golang/go
+    branch: master
+    subdir: .
+
   push-to-docker-hub:
     image: extensions/docker:dev
     action: push
