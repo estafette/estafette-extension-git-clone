@@ -23,13 +23,15 @@ RUN Write-Host ('Downloading {0} ...' -f $env:GIT_DOWNLOAD_URL); \
 	Write-Host 'Removing ...'; \
 	Remove-Item git.zip -Force; \
 	\
+	Write-Host 'Updating PATH ...'; \
+	$env:PATH = 'C:\git\cmd;C:\git\mingw64\bin;C:\git\usr\bin;' + $env:PATH; \
+	[Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine); \
+	\
 	Write-Host 'Verifying install ("git version") ...'; \
 	git version; \
 	\
 	Write-Host 'Complete.';
 
 COPY estafette-extension-git-clone.exe c:/estafette-extension-git-clone.exe
-
-ENV PATH="C:\git\cmd;C:\git\mingw64\bin;C:\git\usr\bin;$PATH"
 
 ENTRYPOINT ["C:/estafette-extension-git-clone.exe"]
