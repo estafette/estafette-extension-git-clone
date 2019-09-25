@@ -122,15 +122,15 @@ releases:
         branch: master
         subdir: test
 
-      # push-to-docker-hub:
-      #   image: extensions/docker:windowsservercore-1809
-      #   action: push
-      #   container: git-clone
-      #   repositories:
-      #   - extensions
-      #   tags:
-      #   - windowsservercore-1809
-      #   pushVersionTag: false
+      push-to-docker-hub:
+        image: extensions/docker:windowsservercore-1809
+        action: push
+        container: git-clone
+        repositories:
+        - extensions
+        tags:
+        - windowsservercore-1809
+        pushVersionTag: false
 
   dev:
     triggers:
