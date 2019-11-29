@@ -1,19 +1,20 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"runtime"
 	"strings"
 
 	"github.com/alecthomas/kingpin"
 	foundation "github.com/estafette/estafette-foundation"
+	"github.com/rs/zerolog/log"
 )
 
 var (
-	appgroup string
-	app string
+	appgroup  string
+	app       string
 	version   string
 	branch    string
 	revision  string
@@ -46,31 +47,34 @@ func main() {
 	// init log format from envvar ESTAFETTE_LOG_FORMAT
 	foundation.InitLoggingFromEnv(appgroup, app, version, branch, revision, buildDate)
 
+	// create context to cancel commands on sigterm
+	ctx := foundation.InitCancellationContext(context.Background())
+
 	// get api token from injected credentials
 	bitbucketAPIToken := ""
 	if *bitbucketAPITokenJSON != "" {
-		log.Println("Unmarshalling injected bitbucket api token credentials")
+		log.Info().Msg("Unmarshalling injected bitbucket api token credentials")
 		var credentials []APITokenCredentials
 		err := json.Unmarshal([]byte(*bitbucketAPITokenJSON), &credentials)
 		if err != nil {
-			log.Fatal("Failed unmarshalling injected bitbucket api token credentials: ", err)
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected bitbucket api token credentials")
 		}
 		if len(credentials) == 0 {
-			log.Fatal("No bitbucket api token credentials have been injected")
+			log.Fatal().Msg("No bitbucket api token credentials have been injected")
 		}
 		bitbucketAPIToken = credentials[0].AdditionalProperties.Token
 	}
 
 	githubAPIToken := ""
 	if *githubAPITokenJSON != "" {
-		log.Println("Unmarshalling injected github api token credentials")
+		log.Info().Msg("Unmarshalling injected github api token credentials")
 		var credentials []APITokenCredentials
 		err := json.Unmarshal([]byte(*githubAPITokenJSON), &credentials)
 		if err != nil {
-			log.Fatal("Failed unmarshalling injected github api token credentials: ", err)
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected github api token credentials")
 		}
 		if len(credentials) == 0 {
-			log.Fatal("No github api token credentials have been injected")
+			log.Fatal().Msg("No github api token credentials have been injected")
 		}
 		githubAPIToken = credentials[0].AdditionalProperties.Token
 	}
@@ -97,9 +101,9 @@ func main() {
 		}
 
 		// git clone the specified repository branch to the specific directory
-		err := gitCloneOverride(*overrideRepo, overrideGitURL, *overrideBranch, *overrideSubdirectory, *shallowClone, *shallowCloneDepth)
+		err := gitCloneOverride(ctx, *overrideRepo, overrideGitURL, *overrideBranch, *overrideSubdirectory, *shallowClone, *shallowCloneDepth)
 		if err != nil {
-			log.Fatalf("Error cloning git repository %v to branch %v into subdir %v: %v", *overrideRepo, *overrideBranch, *overrideSubdirectory, err)
+			log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v into subdir %v", *overrideRepo, *overrideBranch, *overrideSubdirectory)
 		}
 
 		return
@@ -114,8 +118,8 @@ func main() {
 	}
 
 	// git clone to specific branch and revision
-	err := gitCloneRevision(*gitName, gitURL, *gitBranch, *gitRevision, *shallowClone, *shallowCloneDepth)
+	err := gitCloneRevision(ctx, *gitName, gitURL, *gitBranch, *gitRevision, *shallowClone, *shallowCloneDepth)
 	if err != nil {
-		log.Fatalf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v: %v", *gitName, *gitBranch, *gitRevision, *shallowClone, err)
+		log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v and revision %v with shallow clone is %v", *gitName, *gitBranch, *gitRevision, *shallowClone)
 	}
 }
