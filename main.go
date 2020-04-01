@@ -35,8 +35,9 @@ var (
 	overrideBranch       = kingpin.Flag("override-branch", "Set other repository branch to clone from same owner.").Envar("ESTAFETTE_EXTENSION_BRANCH").String()
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
 
-	bitbucketAPITokenJSON = kingpin.Flag("bitbucket-api-token", "Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_BITBUCKET_API_TOKEN").String()
-	githubAPITokenJSON    = kingpin.Flag("github-api-token", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").String()
+	bitbucketAPITokenJSON   = kingpin.Flag("bitbucket-api-token", "Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_BITBUCKET_API_TOKEN").String()
+	githubAPITokenJSON      = kingpin.Flag("github-api-token", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").String()
+	cloudsourceAPITokenJSON = kingpin.Flag("cloudsource-api-token", "Cloud Source api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_CLOUDSOURCE_API_TOKEN").String()
 )
 
 func main() {
@@ -79,6 +80,20 @@ func main() {
 		githubAPIToken = credentials[0].AdditionalProperties.Token
 	}
 
+	cloudsourceAPIToken := ""
+	if *cloudsourceAPITokenJSON != "" {
+		log.Info().Msg("Unmarshalling injected cloud source api token credentials")
+		var credentials []APITokenCredentials
+		err := json.Unmarshal([]byte(*cloudsourceAPITokenJSON), &credentials)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected cloud source api token credentials")
+		}
+		if len(credentials) == 0 {
+			log.Fatal().Msg("No cloud source api token credentials have been injected")
+		}
+		cloudsourceAPIToken = credentials[0].AdditionalProperties.Token
+	}
+
 	if *overrideRepo != "" {
 		if *overrideBranch == "" {
 			*overrideBranch = "master"
@@ -98,6 +113,9 @@ func main() {
 			if githubAPIToken != "" {
 				overrideGitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *overrideRepo)
 			}
+			if cloudsourceAPIToken != "" {
+				overrideGitURL = fmt.Sprintf("https://estafette:%v@%v/p/%v/r/%v", cloudsourceAPIToken, *gitSource, *gitOwner, *overrideRepo)
+			}
 		}
 
 		// git clone the specified repository branch to the specific directory
@@ -115,6 +133,9 @@ func main() {
 	}
 	if githubAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *gitName)
+	}
+	if cloudsourceAPIToken != "" {
+		gitURL = fmt.Sprintf("https://estafette:%v@%v/p/%v/r/%v", cloudsourceAPIToken, *gitSource, *gitOwner, *gitName)
 	}
 
 	// git clone to specific branch and revision
