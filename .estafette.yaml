@@ -75,6 +75,8 @@ stages:
   integration-test-override-min:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
     repo: estafette.io
+    # does not branch for now, since the default value is still master but not used by estaffette.io anymore
+    branch: main
 
   delete-all-files:
     image: golang:1.15.2-alpine3.12
