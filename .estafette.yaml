@@ -69,8 +69,8 @@ stages:
   integration-test-override-max:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
     repo: estafette.io
-    branch: master
-    subdir: test  
+    branch: main
+    subdir: test
 
   integration-test-override-min:
     image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
@@ -137,7 +137,7 @@ releases:
       integration-test-override-max:
         image: extensions/git-clone:${ESTAFETTE_BUILD_VERSION}
         repo: estafette.io
-        branch: master
+        branch: main
         subdir: test
 
       push-to-docker-hub:
