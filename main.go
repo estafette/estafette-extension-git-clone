@@ -36,11 +36,8 @@ var (
 	overrideBranch       = kingpin.Flag("override-branch", "Set other repository branch to clone from same owner.").Envar("ESTAFETTE_EXTENSION_BRANCH").String()
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
 
-	bitbucketAPITokenJSON   = kingpin.Flag("bitbucket-api-token", "Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_BITBUCKET_API_TOKEN").String()
 	bitbucketAPITokenPath   = kingpin.Flag("bitbucket-api-token-path", "Path to file with Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/bitbucket_api_token.json").String()
-	githubAPITokenJSON      = kingpin.Flag("github-api-token", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").String()
 	githubAPITokenPath      = kingpin.Flag("github-api-token-path", "Path to file with Github api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/github_api_token.json").String()
-	cloudsourceAPITokenJSON = kingpin.Flag("cloudsource-api-token", "Cloud Source api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_CLOUDSOURCE_API_TOKEN").String()
 	cloudsourceAPITokenPath = kingpin.Flag("cloudsource-api-token-path", "Path to file with Cloud Source api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/cloudsource_api_token.json").String()
 )
 
@@ -73,17 +70,6 @@ func main() {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
 		}
 		bitbucketAPIToken = credentials[0].AdditionalProperties.Token
-	} else if *bitbucketAPITokenJSON != "" {
-		var credentials []APITokenCredentials
-		log.Info().Msg("Unmarshalling injected bitbucket api token credentials")
-		err := json.Unmarshal([]byte(*bitbucketAPITokenJSON), &credentials)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed unmarshalling injected bitbucket api token credentials")
-		}
-		if len(credentials) == 0 {
-			log.Fatal().Msg("No bitbucket api token credentials have been injected")
-		}
-		bitbucketAPIToken = credentials[0].AdditionalProperties.Token
 	}
 
 	githubAPIToken := ""
@@ -103,17 +89,6 @@ func main() {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
 		}
 		githubAPIToken = credentials[0].AdditionalProperties.Token
-	} else if *githubAPITokenJSON != "" {
-		var credentials []APITokenCredentials
-		log.Info().Msg("Unmarshalling injected github api token credentials")
-		err := json.Unmarshal([]byte(*githubAPITokenJSON), &credentials)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed unmarshalling injected github api token credentials")
-		}
-		if len(credentials) == 0 {
-			log.Fatal().Msg("No github api token credentials have been injected")
-		}
-		githubAPIToken = credentials[0].AdditionalProperties.Token
 	}
 
 	cloudsourceAPIToken := ""
@@ -131,17 +106,6 @@ func main() {
 		err = json.Unmarshal(credentialsFileContent, &credentials)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
-		}
-		cloudsourceAPIToken = credentials[0].AdditionalProperties.Token
-	} else if *cloudsourceAPITokenJSON != "" {
-		var credentials []APITokenCredentials
-		log.Info().Msg("Unmarshalling injected cloud source api token credentials")
-		err := json.Unmarshal([]byte(*cloudsourceAPITokenJSON), &credentials)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed unmarshalling injected cloud source api token credentials")
-		}
-		if len(credentials) == 0 {
-			log.Fatal().Msg("No cloud source api token credentials have been injected")
 		}
 		cloudsourceAPIToken = credentials[0].AdditionalProperties.Token
 	}
