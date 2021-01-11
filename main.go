@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"runtime"
 	"strings"
 
@@ -36,8 +37,11 @@ var (
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
 
 	bitbucketAPITokenJSON   = kingpin.Flag("bitbucket-api-token", "Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_BITBUCKET_API_TOKEN").String()
+	bitbucketAPITokenPath   = kingpin.Flag("bitbucket-api-token-path", "Path to file with Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/bitbucket_api_token.json").String()
 	githubAPITokenJSON      = kingpin.Flag("github-api-token", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").String()
+	githubAPITokenPath      = kingpin.Flag("github-api-token-path", "Path to file with Github api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/github_api_token.json").String()
 	cloudsourceAPITokenJSON = kingpin.Flag("cloudsource-api-token", "Cloud Source api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_CLOUDSOURCE_API_TOKEN").String()
+	cloudsourceAPITokenPath = kingpin.Flag("cloudsource-api-token-path", "Path to file with Cloud Source api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/cloudsource_api_token.json").String()
 )
 
 func main() {
@@ -53,9 +57,25 @@ func main() {
 
 	// get api token from injected credentials
 	bitbucketAPIToken := ""
-	if *bitbucketAPITokenJSON != "" {
-		log.Info().Msg("Unmarshalling injected bitbucket api token credentials")
+	// use mounted credential file if present instead of relying on an envvar
+	if runtime.GOOS == "windows" {
+		*bitbucketAPITokenPath = "C:" + *bitbucketAPITokenPath
+	}
+	if foundation.FileExists(*bitbucketAPITokenPath) {
 		var credentials []APITokenCredentials
+		log.Info().Msgf("Reading credentials from file at path %v...", *bitbucketAPITokenPath)
+		credentialsFileContent, err := ioutil.ReadFile(*bitbucketAPITokenPath)
+		if err != nil {
+			log.Fatal().Msgf("Failed reading credential file at path %v.", *bitbucketAPITokenPath)
+		}
+		err = json.Unmarshal(credentialsFileContent, &credentials)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
+		}
+		bitbucketAPIToken = credentials[0].AdditionalProperties.Token
+	} else if *bitbucketAPITokenJSON != "" {
+		var credentials []APITokenCredentials
+		log.Info().Msg("Unmarshalling injected bitbucket api token credentials")
 		err := json.Unmarshal([]byte(*bitbucketAPITokenJSON), &credentials)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected bitbucket api token credentials")
@@ -67,9 +87,25 @@ func main() {
 	}
 
 	githubAPIToken := ""
-	if *githubAPITokenJSON != "" {
-		log.Info().Msg("Unmarshalling injected github api token credentials")
+	// use mounted credential file if present instead of relying on an envvar
+	if runtime.GOOS == "windows" {
+		*githubAPITokenPath = "C:" + *githubAPITokenPath
+	}
+	if foundation.FileExists(*githubAPITokenPath) {
 		var credentials []APITokenCredentials
+		log.Info().Msgf("Reading credentials from file at path %v...", *githubAPITokenPath)
+		credentialsFileContent, err := ioutil.ReadFile(*githubAPITokenPath)
+		if err != nil {
+			log.Fatal().Msgf("Failed reading credential file at path %v.", *githubAPITokenPath)
+		}
+		err = json.Unmarshal(credentialsFileContent, &credentials)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
+		}
+		githubAPIToken = credentials[0].AdditionalProperties.Token
+	} else if *githubAPITokenJSON != "" {
+		var credentials []APITokenCredentials
+		log.Info().Msg("Unmarshalling injected github api token credentials")
 		err := json.Unmarshal([]byte(*githubAPITokenJSON), &credentials)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected github api token credentials")
@@ -81,9 +117,25 @@ func main() {
 	}
 
 	cloudsourceAPIToken := ""
-	if *cloudsourceAPITokenJSON != "" {
-		log.Info().Msg("Unmarshalling injected cloud source api token credentials")
+	// use mounted credential file if present instead of relying on an envvar
+	if runtime.GOOS == "windows" {
+		*cloudsourceAPITokenPath = "C:" + *cloudsourceAPITokenPath
+	}
+	if foundation.FileExists(*cloudsourceAPITokenPath) {
 		var credentials []APITokenCredentials
+		log.Info().Msgf("Reading credentials from file at path %v...", *cloudsourceAPITokenPath)
+		credentialsFileContent, err := ioutil.ReadFile(*cloudsourceAPITokenPath)
+		if err != nil {
+			log.Fatal().Msgf("Failed reading credential file at path %v.", *cloudsourceAPITokenPath)
+		}
+		err = json.Unmarshal(credentialsFileContent, &credentials)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
+		}
+		cloudsourceAPIToken = credentials[0].AdditionalProperties.Token
+	} else if *cloudsourceAPITokenJSON != "" {
+		var credentials []APITokenCredentials
+		log.Info().Msg("Unmarshalling injected cloud source api token credentials")
 		err := json.Unmarshal([]byte(*cloudsourceAPITokenJSON), &credentials)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed unmarshalling injected cloud source api token credentials")
