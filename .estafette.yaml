@@ -19,7 +19,7 @@ stages:
       server == 'estafette'
 
   build:
-    image: golang:1.15.6-alpine3.12
+    image: golang:1.15.7-alpine3.13
     env:
       CGO_ENABLED: 0
       GOOS: linux
@@ -79,7 +79,7 @@ stages:
     branch: main
 
   delete-all-files:
-    image: golang:1.15.6-alpine3.12
+    image: golang:1.15.7-alpine3.13
     commands:
     - ls -latr
     - rm -rf *
