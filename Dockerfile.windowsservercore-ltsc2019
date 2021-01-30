@@ -5,9 +5,9 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019
 COPY --from=builder C:/git C:/git
 
 # improve git performance
-RUN C:/git config --global core.preloadindex true; \
-    C:/git config --global core.fscache true; \
-    C:/git config --global gc.auto 256
+RUN C:/git.exe config --global core.preloadindex true; \
+    C:/git.exe config --global core.fscache true; \
+    C:/git.exe config --global gc.auto 256
 
 COPY estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
 
