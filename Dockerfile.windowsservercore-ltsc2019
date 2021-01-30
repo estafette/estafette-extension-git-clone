@@ -1,8 +1,13 @@
-FROM estafette/golang:1.15.6-windowsservercore-ltsc2019 as builder
+FROM estafette/golang:1.15.7-windowsservercore-ltsc2019 as builder
 
 FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
 COPY --from=builder C:/git C:/git
+
+# improve git performance
+RUN C:/git config --global core.preloadindex true; \
+    C:/git config --global core.fscache true; \
+    C:/git config --global gc.auto 256
 
 COPY estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
 
