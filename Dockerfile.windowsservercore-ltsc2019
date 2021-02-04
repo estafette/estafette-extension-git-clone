@@ -48,7 +48,7 @@ RUN git config --global core.preloadindex true; \
     git config --global core.fscache true; \
     git config --global gc.auto 256
 
-COPY estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
+COPY ./estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
 
 ENV ESTAFETTE_LOG_FORMAT="console" \
     PATH="C:\git\cmd;C:\git\mingw64\bin;C:\git\usr\bin;$PATH"
