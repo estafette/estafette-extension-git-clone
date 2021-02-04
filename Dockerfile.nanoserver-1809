@@ -46,7 +46,7 @@ RUN Write-Host ('Downloading {0} to git.zip ...' -f $env:GIT_DOWNLOAD_URL); \
 FROM mcr.microsoft.com/windows/nanoserver:1809
 
 COPY --from=builder /git /git
-COPY estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
+COPY ./estafette-extension-git-clone.exe C:/estafette-extension-git-clone.exe
 
 USER ContainerAdministrator
 
