@@ -170,8 +170,12 @@ releases:
   nanoserver-1809-dev:
     builder:
       os: windows
+      track: nanoserver-1809-dev
     clone: true
     stages:
+      git-clone:
+        image: extensions/git-clone:nanoserver-1809-stable
+
       build:
         image: estafette/golang:1.15.7-nanoserver-1809
         shell: cmd
@@ -183,7 +187,7 @@ releases:
         - go build -v -ldflags "-X main.app=%ESTAFETTE_GIT_NAME% -X main.version=%ESTAFETTE_BUILD_VERSION% -X main.revision=%ESTAFETTE_GIT_REVISION% -X main.branch=%ESTAFETTE_GIT_BRANCH% -X main.buildDate=%ESTAFETTE_BUILD_DATETIME%" -o ./publish/%ESTAFETTE_GIT_NAME%.exe
 
       bake:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: build
         no-cache: true
         expand-variables: false
@@ -200,7 +204,7 @@ releases:
         subdir: test
 
       push-to-docker-hub:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: push
         container: git-clone
         repositories:
@@ -212,8 +216,12 @@ releases:
   nanoserver-1809-beta:
     builder:
       os: windows
+      track: nanoserver-1809-dev
     clone: true
     stages:
+      git-clone:
+        image: extensions/git-clone:nanoserver-1809-stable
+
       build:
         image: estafette/golang:1.15.7-nanoserver-1809
         shell: cmd
@@ -225,7 +233,7 @@ releases:
         - go build -v -ldflags "-X main.app=%ESTAFETTE_GIT_NAME% -X main.version=%ESTAFETTE_BUILD_VERSION% -X main.revision=%ESTAFETTE_GIT_REVISION% -X main.branch=%ESTAFETTE_GIT_BRANCH% -X main.buildDate=%ESTAFETTE_BUILD_DATETIME%" -o ./publish/%ESTAFETTE_GIT_NAME%.exe
 
       bake:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: build
         no-cache: true
         expand-variables: false
@@ -242,7 +250,7 @@ releases:
         subdir: test
 
       push-to-docker-hub:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: push
         container: git-clone
         repositories:
@@ -254,8 +262,12 @@ releases:
   nanoserver-1809-stable:
     builder:
       os: windows
+      track: nanoserver-1809-dev
     clone: true
     stages:
+      git-clone:
+        image: extensions/git-clone:nanoserver-1809-stable
+
       build:
         image: estafette/golang:1.15.7-nanoserver-1809
         shell: cmd
@@ -267,7 +279,7 @@ releases:
         - go build -v -ldflags "-X main.app=%ESTAFETTE_GIT_NAME% -X main.version=%ESTAFETTE_BUILD_VERSION% -X main.revision=%ESTAFETTE_GIT_REVISION% -X main.branch=%ESTAFETTE_GIT_BRANCH% -X main.buildDate=%ESTAFETTE_BUILD_DATETIME%" -o ./publish/%ESTAFETTE_GIT_NAME%.exe
 
       bake:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: build
         no-cache: true
         expand-variables: false
@@ -284,12 +296,11 @@ releases:
         subdir: test
 
       push-to-docker-hub:
-        image: extensions/docker:nanoserver-1809
+        image: extensions/docker:nanoserver-1809-dev
         action: push
         container: git-clone
         repositories:
         - extensions
         tags:
-        - nanoserver-1809
         - nanoserver-1809-stable
         pushVersionTag: false
