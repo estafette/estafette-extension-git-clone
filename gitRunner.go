@@ -75,7 +75,7 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 
 	args := []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	if shallowClone {
-		args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
+		args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), "--no-tags", gitURL, targetDirectory}
 	}
 
 	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
