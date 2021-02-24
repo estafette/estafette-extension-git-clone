@@ -19,7 +19,7 @@ stages:
       server == 'estafette'
 
   build:
-    image: golang:1.15.7-alpine3.13
+    image: golang:1.16.0-alpine3.13
     env:
       CGO_ENABLED: 0
       GOOS: linux
@@ -32,7 +32,7 @@ stages:
     action: build
     container: git-clone
     inline: |
-      FROM alpine:3.12
+      FROM alpine:3.13
 
       LABEL maintainer="estafette.io" \
             description="The ${ESTAFETTE_GIT_NAME} component is an Estafette extension to clone a git repository for builds handled by Estafette CI"
@@ -79,7 +79,7 @@ stages:
     branch: main
 
   delete-all-files:
-    image: golang:1.15.7-alpine3.13
+    image: golang:1.16.0-alpine3.13
     commands:
     - ls -latr
     - rm -rf *
@@ -177,7 +177,7 @@ releases:
         image: extensions/git-clone:nanoserver-1809-stable
 
       build:
-        image: estafette/golang:1.15.7-nanoserver-1809
+        image: estafette/golang:1.16.0-nanoserver-1809
         shell: cmd
         env:
           CGO_ENABLED: 0
@@ -223,7 +223,7 @@ releases:
         image: extensions/git-clone:nanoserver-1809-stable
 
       build:
-        image: estafette/golang:1.15.7-nanoserver-1809
+        image: estafette/golang:1.16.0-nanoserver-1809
         shell: cmd
         env:
           CGO_ENABLED: 0
@@ -269,7 +269,7 @@ releases:
         image: extensions/git-clone:nanoserver-1809-stable
 
       build:
-        image: estafette/golang:1.15.7-nanoserver-1809
+        image: estafette/golang:1.16.0-nanoserver-1809
         shell: cmd
         env:
           CGO_ENABLED: 0
