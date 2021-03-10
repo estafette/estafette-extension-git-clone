@@ -52,6 +52,11 @@ USER ContainerAdministrator
 
 RUN setx /m PATH "%PATH%;C:\git\cmd;C:\git\mingw64\bin;C:\git\usr\bin"
 
+RUN git config --list --show-origin \
+    && git config --global core.preloadindex true \
+    && git config --global core.fscache true \
+    && git config --global gc.auto 256
+
 ENV ESTAFETTE_LOG_FORMAT="console"
 
 ENTRYPOINT ["C:/estafette-extension-git-clone.exe"]
