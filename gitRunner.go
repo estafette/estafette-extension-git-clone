@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	foundation "github.com/estafette/estafette-foundation"
@@ -76,6 +77,13 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 	args := []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), gitURL, targetDirectory}
 	if shallowClone {
 		args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), "--no-tags", gitURL, targetDirectory}
+	}
+
+	if runtime.GOOS == "windows" {
+		args = []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), "--verbose", gitURL, targetDirectory}
+		if shallowClone {
+			args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), "--verbose", "--no-tags", gitURL, targetDirectory}
+		}
 	}
 
 	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
