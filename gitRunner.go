@@ -80,9 +80,9 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 	}
 
 	if runtime.GOOS == "windows" {
-		args = []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), "--verbose", gitURL, targetDirectory}
+		args = []string{"clone", fmt.Sprintf("--branch=%v", gitBranch), "--verbose", "--progress", gitURL, targetDirectory}
 		if shallowClone {
-			args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), "--verbose", "--no-tags", gitURL, targetDirectory}
+			args = []string{"clone", fmt.Sprintf("--depth=%v", shallowCloneDepth), fmt.Sprintf("--branch=%v", gitBranch), "--verbose", "--progress", "--no-tags", gitURL, targetDirectory}
 		}
 	}
 
