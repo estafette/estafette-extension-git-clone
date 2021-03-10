@@ -63,6 +63,7 @@ stages:
         image: extensions/docker:dev
         action: trivy
         container: git-clone
+        severity: low
         repositories:
         - extensions
 
