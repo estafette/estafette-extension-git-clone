@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -88,6 +90,26 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 
 	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
 
+	if err != nil {
+		return
+	}
+
+	// submodule init and update
+	cmd := exec.CommandContext(ctx, "git", "submodule", "init")
+	cmd.Env = os.Environ()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Dir = targetDirectory
+	err = cmd.Run()
+	if err != nil {
+		return
+	}
+	cmd = exec.CommandContext(ctx, "git", "submodule", "update")
+	cmd.Env = os.Environ()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Dir = targetDirectory
+	err = cmd.Run()
 	if err != nil {
 		return
 	}
