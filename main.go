@@ -47,7 +47,15 @@ func main() {
 	kingpin.Parse()
 
 	// init log format from envvar ESTAFETTE_LOG_FORMAT
-	foundation.InitLoggingFromEnv(appgroup, app, version, branch, revision, buildDate)
+	applicationInfo := foundation.ApplicationInfo{
+		AppGroup:  appgroup,
+		App:       app,
+		Version:   version,
+		Branch:    branch,
+		Revision:  revision,
+		BuildDate: buildDate,
+	}
+	foundation.InitLoggingFromEnv(applicationInfo)
 
 	// create context to cancel commands on sigterm
 	ctx := foundation.InitCancellationContext(context.Background())
