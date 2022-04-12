@@ -92,15 +92,17 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 		return
 	}
 
-	// submodule init and update
-	err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "init"})
-	if err != nil {
-		return
-	}
+	if foundation.FileExists(filepath.Join(targetDirectory, ".gitmodules")) {
+		log.Info().Msg("Found .gitmodules, initializing submodules")
+		err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "init"})
+		if err != nil {
+			return
+		}
 
-	err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "update"})
-	if err != nil {
-		return
+		err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "update"})
+		if err != nil {
+			return
+		}
 	}
 	return
 }
