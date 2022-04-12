@@ -154,18 +154,18 @@ func main() {
 	gitURL := fmt.Sprintf("https://%v/%v/%v", *gitSource, *gitOwner, *gitName)
 	if bitbucketAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *gitName)
-		context.WithValue(ctx, "source", "bitbucket")
-		context.WithValue(ctx, "token", bitbucketAPIToken)
+		ctx = context.WithValue(ctx, "source", "bitbucket")
+		ctx = context.WithValue(ctx, "token", bitbucketAPIToken)
 	}
 	if githubAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *gitName)
-		context.WithValue(ctx, "source", "github")
-		context.WithValue(ctx, "token", githubAPIToken)
+		ctx = context.WithValue(ctx, "source", "github")
+		ctx = context.WithValue(ctx, "token", githubAPIToken)
 	}
 	if cloudsourceAPIToken != "" {
 		gitURL = fmt.Sprintf("https://estafette:%v@%v/p/%v/r/%v", cloudsourceAPIToken, *gitSource, *gitOwner, *gitName)
-		context.WithValue(ctx, "source", "cloudsource")
-		context.WithValue(ctx, "token", cloudsourceAPIToken)
+		ctx = context.WithValue(ctx, "source", "cloudsource")
+		ctx = context.WithValue(ctx, "token", cloudsourceAPIToken)
 	}
 
 	// git clone to specific branch and revision
