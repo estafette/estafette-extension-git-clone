@@ -115,9 +115,9 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 		default:
 			return errors.New("invalid git source expected bitbucket, github or cloudsource")
 		}
+		data = regexp.MustCompile(`:`).ReplaceAll(data, []byte("/"))
 		data = regexp.MustCompile(`https://`).ReplaceAll(data, []byte(gitCreds))
 		data = regexp.MustCompile(`git@`).ReplaceAll(data, []byte(gitCreds))
-		data = regexp.MustCompile(`:`).ReplaceAll(data, []byte("/"))
 		err = ioutil.WriteFile(gitModules, data, 0644)
 		if err != nil {
 			return
