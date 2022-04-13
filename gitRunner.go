@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"math"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"time"
 
@@ -90,6 +93,53 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 
 	if err != nil {
 		return
+	}
+
+	gitModules := filepath.Join(targetDirectory, ".gitmodules")
+	if foundation.FileExists(gitModules) {
+		log.Info().Msg("Found .gitmodules")
+		// update .gitmodules with git credentials
+		var data []byte
+		data, err = ioutil.ReadFile(gitModules)
+		if err != nil {
+			return
+		}
+		gitCreds := ""
+		switch ctx.Value("source") {
+		case "bitbucket":
+			gitCreds = "https://x-token-auth:" + ctx.Value("token").(string) + "@"
+		case "github":
+			gitCreds = "https://x-access-token:" + ctx.Value("token").(string) + "@"
+		case "cloudsource":
+			gitCreds = "https://estafette:" + ctx.Value("token").(string) + "@"
+		default:
+			return errors.New("invalid git source expected bitbucket, github or cloudsource")
+		}
+		data = regexp.MustCompile(`:`).ReplaceAll(data, []byte("/"))
+		data = regexp.MustCompile(`https://`).ReplaceAll(data, []byte(gitCreds))
+		data = regexp.MustCompile(`git@`).ReplaceAll(data, []byte(gitCreds))
+		err = ioutil.WriteFile(gitModules, data, 0644)
+		if err != nil {
+			return
+		}
+
+		log.Info().Msg("Initializing submodules")
+		err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "init"})
+		if err != nil {
+			return
+		}
+
+		log.Info().Msg("Updating submodules")
+		err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"submodule", "update"})
+		if err != nil {
+			return
+		}
+
+		// restore .gitmodules file
+		err = foundation.RunCommandInDirectoryWithArgsExtended(ctx, targetDirectory, "git", []string{"checkout", ".gitmodules"})
+		if err != nil {
+			return
+		}
 	}
 	return
 }

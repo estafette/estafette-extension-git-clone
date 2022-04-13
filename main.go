@@ -47,7 +47,15 @@ func main() {
 	kingpin.Parse()
 
 	// init log format from envvar ESTAFETTE_LOG_FORMAT
-	foundation.InitLoggingFromEnv(appgroup, app, version, branch, revision, buildDate)
+	applicationInfo := foundation.ApplicationInfo{
+		AppGroup:  appgroup,
+		App:       app,
+		Version:   version,
+		Branch:    branch,
+		Revision:  revision,
+		BuildDate: buildDate,
+	}
+	foundation.InitLoggingFromEnv(applicationInfo)
 
 	// create context to cancel commands on sigterm
 	ctx := foundation.InitCancellationContext(context.Background())
@@ -146,12 +154,18 @@ func main() {
 	gitURL := fmt.Sprintf("https://%v/%v/%v", *gitSource, *gitOwner, *gitName)
 	if bitbucketAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-token-auth:%v@%v/%v/%v", bitbucketAPIToken, *gitSource, *gitOwner, *gitName)
+		ctx = context.WithValue(ctx, "source", "bitbucket")
+		ctx = context.WithValue(ctx, "token", bitbucketAPIToken)
 	}
 	if githubAPIToken != "" {
 		gitURL = fmt.Sprintf("https://x-access-token:%v@%v/%v/%v", githubAPIToken, *gitSource, *gitOwner, *gitName)
+		ctx = context.WithValue(ctx, "source", "github")
+		ctx = context.WithValue(ctx, "token", githubAPIToken)
 	}
 	if cloudsourceAPIToken != "" {
 		gitURL = fmt.Sprintf("https://estafette:%v@%v/p/%v/r/%v", cloudsourceAPIToken, *gitSource, *gitOwner, *gitName)
+		ctx = context.WithValue(ctx, "source", "cloudsource")
+		ctx = context.WithValue(ctx, "token", cloudsourceAPIToken)
 	}
 
 	// git clone to specific branch and revision
