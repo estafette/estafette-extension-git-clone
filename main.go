@@ -34,6 +34,7 @@ var (
 	shallowCloneDepth    = kingpin.Flag("shallow-clone-depth", "Depth for shallow clone git repository for improved clone time.").Default("50").OverrideDefaultFromEnvar("ESTAFETTE_EXTENSION_DEPTH").Int()
 	overrideRepo         = kingpin.Flag("override-repo", "Set other repository name to clone from same owner.").Envar("ESTAFETTE_EXTENSION_REPO").String()
 	overrideBranch       = kingpin.Flag("override-branch", "Set other repository branch to clone from same owner.").Envar("ESTAFETTE_EXTENSION_BRANCH").String()
+	overrideRevision     = kingpin.Flag("override-revision", "Set other repository revision to clone from same owner.").Envar("ESTAFETTE_EXTENSION_REVISION").String()
 	overrideSubdirectory = kingpin.Flag("override-directory", "Set other repository directory to clone from same owner.").Envar("ESTAFETTE_EXTENSION_SUBDIR").String()
 
 	bitbucketAPITokenPath   = kingpin.Flag("bitbucket-api-token-path", "Path to file with Bitbucket api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/bitbucket_api_token.json").String()
@@ -143,7 +144,7 @@ func main() {
 		}
 
 		// git clone the specified repository branch to the specific directory
-		err := gitCloneOverride(ctx, *overrideRepo, overrideGitURL, *overrideBranch, *overrideSubdirectory, *shallowClone, *shallowCloneDepth)
+		err := gitCloneOverride(ctx, *overrideRepo, overrideGitURL, *overrideBranch, *overrideRevision, *overrideSubdirectory, *shallowClone, *shallowCloneDepth)
 		if err != nil {
 			log.Fatal().Err(err).Msgf("Error cloning git repository %v to branch %v into subdir %v", *overrideRepo, *overrideBranch, *overrideSubdirectory)
 		}

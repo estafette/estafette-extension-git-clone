@@ -38,7 +38,7 @@ func gitCloneRevision(ctx context.Context, gitName, gitURL, gitBranch, gitRevisi
 	return
 }
 
-func gitCloneOverride(ctx context.Context, gitName, gitURL, gitBranch, subdir string, shallowClone bool, shallowCloneDepth int) (err error) {
+func gitCloneOverride(ctx context.Context, gitName, gitURL, gitBranch, gitRevision, subdir string, shallowClone bool, shallowCloneDepth int) (err error) {
 
 	log.Info().Msgf("Cloning git repository %v to branch %v into subdir %v with shallow clone is %v and depth %v...", gitName, gitBranch, subdir, shallowClone, shallowCloneDepth)
 
@@ -46,6 +46,15 @@ func gitCloneOverride(ctx context.Context, gitName, gitURL, gitBranch, subdir st
 	err = gitCloneWithRetry(ctx, gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, subdir, 3)
 	if err != nil {
 		return
+	}
+
+	// checkout specific revision
+	if gitRevision != "" {
+		err = gitCheckout(ctx, gitRevision)
+		if err != nil {
+			log.Info().Msgf("Finished cloning git repository %v to revision %v into subdir %v with shallow clone is %v and depth %v", gitName, gitRevision, subdir, shallowClone, shallowCloneDepth)
+			return
+		}
 	}
 
 	log.Info().Msgf("Finished cloning git repository %v to branch %v into subdir %v with shallow clone is %v and depth %v", gitName, gitBranch, subdir, shallowClone, shallowCloneDepth)
