@@ -18,16 +18,17 @@ import (
 func gitCloneRevision(ctx context.Context, gitName, gitURL, gitBranch, gitRevision string, shallowClone bool, shallowCloneDepth int) (err error) {
 
 	log.Info().Msgf("Cloning git repository %v to branch %v and revision %v with shallow clone is %v and depth %v...", gitName, gitBranch, gitRevision, shallowClone, shallowCloneDepth)
+	subdir := "."
 
 	// git clone
-	err = gitCloneWithRetry(ctx, gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, ".", 3)
+	err = gitCloneWithRetry(ctx, gitName, gitURL, gitBranch, shallowClone, shallowCloneDepth, subdir, 3)
 	if err != nil {
 		return
 	}
 
 	// checkout specific revision
 	if gitRevision != "" {
-		err = gitCheckout(ctx, gitRevision)
+		err = gitCheckout(ctx, gitRevision, subdir)
 		if err != nil {
 			return
 		}
@@ -50,7 +51,7 @@ func gitCloneOverride(ctx context.Context, gitName, gitURL, gitBranch, gitRevisi
 
 	// checkout specific revision
 	if gitRevision != "" {
-		err = gitCheckout(ctx, gitRevision)
+		err = gitCheckout(ctx, gitRevision, subdir)
 		if err != nil {
 			log.Info().Msgf("Finished cloning git repository %v to revision %v into subdir %v with shallow clone is %v and depth %v", gitName, gitRevision, subdir, shallowClone, shallowCloneDepth)
 			return
@@ -153,14 +154,19 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 	return
 }
 
-func gitCheckout(ctx context.Context, gitRevision string) (err error) {
-
-	args := []string{"checkout", "--quiet", "--force", gitRevision}
-
+func gitCheckout(ctx context.Context, gitRevision, subdir string) (err error) {
+	args := []string{"-C", getTargetDir(subdir), "fetch", "origin", "--depth", "1", gitRevision}
 	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
 	if err != nil {
 		return
 	}
+
+	args = []string{"-C", getTargetDir(subdir), "checkout", "--quiet", "--force", gitRevision}
+	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
+	if err != nil {
+		return
+	}
+
 	return
 }
 
