@@ -154,7 +154,7 @@ func gitClone(ctx context.Context, gitName, gitURL, gitBranch string, shallowClo
 }
 
 func gitCheckout(ctx context.Context, gitRevision string) (err error) {
-	args := []string{"fetch", "origin", fmt.Sprintf("HEAD:refs/heads/%s", gitRevision)}
+	args := []string{"fetch", "origin", "--depth", "1", gitRevision}
 	err = foundation.RunCommandWithArgsExtended(ctx, "git", args)
 	if err != nil {
 		return
